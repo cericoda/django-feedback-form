@@ -3,7 +3,9 @@ from django import forms
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from django_libs.utils_email import send_email
+from django.core.mail import EmailMultiAlternatives
+from django.template.context import Context
+from django.template.loader import get_template
 
 from .models import Feedback
 
@@ -33,18 +35,25 @@ class FeedbackForm(forms.ModelForm):
         if not self.cleaned_data.get('url'):
             self.instance.content_object = self.content_object
             obj = super(FeedbackForm, self).save()
-            send_email(
-                '',
-                {
-                    'url': reverse('admin:feedback_form_feedback_change',
-                                   args=(obj.id, )),
-                    'feedback': obj,
-                },
-                'feedback_form/email/subject.html',
-                'feedback_form/email/body.html',
-                from_email=settings.FROM_EMAIL,
-                recipients=[manager[1] for manager in settings.MANAGERS],
+            context = {
+                'url': reverse('admin:feedback_form_feedback_change',
+                               args=(obj.id, )),
+                'feedback': obj,
+            }
+            subject = get_template('feedback_form/email/subject.html').render(
+                Context(context)
             )
+            message_body = get_template('feedback_form/email/body.html').render(
+                Context(context)
+            )
+            msg = EmailMultiAlternatives(
+                subject,
+                message_body,
+                from_email=settings.FROM_EMAIL,
+                to=[manager[1] for manager in settings.MANAGERS],
+            )
+            msg.attach_alternative(message_body, "text/html")
+            msg.send()
             if getattr(settings, 'FEEDBACK_EMAIL_CONFIRMATION', False):
                 email = None
                 if obj.email:
@@ -52,13 +61,20 @@ class FeedbackForm(forms.ModelForm):
                 elif obj.user.email:
                     email = obj.user.email
                 if email:
-                    send_email(
-                        '', {},
-                        'feedback_form/email/confirmation_subject.html',
-                        'feedback_form/email/confirmation_body.html',
-                        from_email=settings.FROM_EMAIL,
-                        recipients=[email],
+                    subject = get_template('feedback_form/email/confirmation_subject.html').render(
+                        Context(context)
                     )
+                    message_body = get_template('feedback_form/email/confirmation_body.html').render(
+                        Context(context)
+                    )
+                    msg = EmailMultiAlternatives(
+                        subject,
+                        message_body,
+                        from_email=settings.FROM_EMAIL,
+                        to=[email],
+                    )
+                    msg.attach_alternative(message_body, "text/html")
+                    msg.send()
             return obj
 
     class Media:
