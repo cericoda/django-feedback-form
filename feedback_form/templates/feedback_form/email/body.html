@@ -1,4 +1,4 @@
-{% load i18n libs_tags %}
+{% load i18n %}
 <h2>
     {% if feedback.content_object %}
         {% trans "A new report has been posted:" %}
@@ -9,7 +9,7 @@
 
 <p>{% trans "URL" %}: {{ url }}</p>
 {% if feedback.content_object %}
-    <p>{% trans "Object type" %}: {{ feedback.content_object|get_content_type:'model' }}</p>
+    <p>{% trans "Object" %}: {{ feedback.content_object }}</p>
     <p>{% trans "Object PK" %}: {{ feedback.content_object.pk }}</p>
 {% endif %}
 <p>{% trans "Email" %}: {{ feedback.email }}</p>
