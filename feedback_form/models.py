@@ -57,6 +57,11 @@ class Feedback(models.Model):
     class Meta:
         ordering = ['-creation_date']
 
+    def get_user_email(self):
+        if obj.user:
+            return obj.user.email
+        return obj.email
+
     def __unicode__(self):
         if self.user:
             return '{0} - {1}'.format(self.creation_date, self.user)
