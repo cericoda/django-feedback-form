@@ -9,7 +9,7 @@ from .models import Feedback
 class FeedbackAdmin(admin.ModelAdmin):
     """Admin class for the ``Feedback`` model."""
     list_display = [
-        'creation_date', 'get_user_email', 'current_url', 'message_excerpt', ]
+        'creation_date', 'user_email', 'current_url', 'message_excerpt', ]
     list_filter = ['creation_date', 'current_url', ]
     date_hierarchy = 'creation_date'
     search_fields = ['user__email', 'email', 'current_url', 'message', ]
@@ -18,7 +18,6 @@ class FeedbackAdmin(admin.ModelAdmin):
         return truncatewords(obj.message, 10)
     message_excerpt.short_description = _('Message excerpt')
 
-    get_user_email.short_description = _('Email')
 
 
 admin.site.register(Feedback, FeedbackAdmin)
