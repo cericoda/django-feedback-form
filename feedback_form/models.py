@@ -58,9 +58,13 @@ class Feedback(models.Model):
         ordering = ['-creation_date']
 
     def get_user_email(self):
-        if obj.user:
-            return obj.user.email
-        return obj.email
+        if self.user:
+            return self.user.email
+        return self.email
+
+    get_user_email.short_description = _('Email')
+
+    user_email = property(get_user_email)
 
     def __unicode__(self):
         if self.user:
