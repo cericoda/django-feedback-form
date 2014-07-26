@@ -7,7 +7,8 @@
     {% endif %}
 </h2>
 
-<p>{% trans "View Feedback" %}: {{ feedback_url }}</p>
+<p>{{ feedback.message }}</p>
+<hr />
 {% if feedback.content_object %}
     <p>{% trans "Object" %}: {{ feedback.content_object }}</p>
     <p>{% trans "Object PK" %}: {{ feedback.content_object.pk }}</p>
@@ -17,5 +18,4 @@
 {% endif %}
 <p>{% trans "Email" %}: {{ feedback.user_email }}</p>
 <p>{% trans "Date" %}: {{ feedback.creation_date|date }}</p>
-<hr />
-<p>{{ feedback.message }}</p>
+<p>{% trans "View in admin" %}: {{ feedback_url }}</p>
