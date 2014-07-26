@@ -22,6 +22,7 @@ class FeedbackForm(forms.ModelForm):
     def __init__(self, user=None, url=None, prefix='feedback',
                  content_object=None, *args, **kwargs):
         self.content_object = content_object
+        self.request = kwargs.pop('request', None)
         super(FeedbackForm, self).__init__(prefix='feedback', *args, **kwargs)
         if url:
             self.instance.current_url = url
@@ -35,9 +36,12 @@ class FeedbackForm(forms.ModelForm):
         if not self.cleaned_data.get('url'):
             self.instance.content_object = self.content_object
             obj = super(FeedbackForm, self).save()
+            feedback_url = reverse('admin:feedback_form_feedback_change',
+                               args=(obj.id, ))
+            if self.request:
+                feedback_url = self.request.build_absolute_uri(feedback_url)
             context = {
-                'url': reverse('admin:feedback_form_feedback_change',
-                               args=(obj.id, )),
+                'feedback_url': feedback_url,
                 'feedback': obj,
             }
             subject = get_template('feedback_form/email/subject.html').render(
