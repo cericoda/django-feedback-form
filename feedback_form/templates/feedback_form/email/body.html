@@ -7,10 +7,13 @@
     {% endif %}
 </h2>
 
-<p>{% trans "URL" %}: {{ url }}</p>
+<p>{% trans "View Feedback" %}: {{ feedback_url }}</p>
 {% if feedback.content_object %}
     <p>{% trans "Object" %}: {{ feedback.content_object }}</p>
     <p>{% trans "Object PK" %}: {{ feedback.content_object.pk }}</p>
+{% endif %}
+{% if feedback.current_url %}
+    <p>{% trans "Feedback about" %}: {{ feedback.current_url }}</p>
 {% endif %}
 <p>{% trans "Email" %}: {{ feedback.user_email }}</p>
 <p>{% trans "Date" %}: {{ feedback.creation_date|date }}</p>
